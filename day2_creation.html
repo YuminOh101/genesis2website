@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>창조의 이야기 — 둘째 날</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --sky-deep:    #050d1a;
+      --sky-mid:     #0a1f3d;
+      --sky-light:   #0f3460;
+      --heaven:      #1a5f7a;
+      --water-dark:  #0d2137;
+      --water-mid:   #0e3a5e;
+      --water-light: #1976a8;
+      --gold:        #c9a84c;
+      --gold-light:  #f0d080;
+      --white-glow:  rgba(255,255,255,0.92);
+      --cream:       #f5ede0;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      font-family: 'Cormorant Garamond', serif;
+      background: var(--sky-deep);
+      color: var(--cream);
+    }
+
+    /* ── BACK BUTTON ─────────────────────────────────── */
+    .back-btn {
+      position: fixed;
+      top: 20px;
+      left: 22px;
+      z-index: 999;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.55);
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.18);
+      padding: 6px 14px;
+      border-radius: 2px;
+      backdrop-filter: blur(6px);
+      background: rgba(5,13,26,0.45);
+      transition: color 0.3s, border-color 0.3s, background 0.3s;
+    }
+    .back-btn:hover {
+      color: var(--gold-light);
+      border-color: rgba(201,168,76,0.55);
+      background: rgba(5,13,26,0.7);
+    }
+    .back-btn::before { content: '← '; }
+
+    /* ── HERO SCENE ───────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    /* sky gradient layers */
+    .sky-layer {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        180deg,
+        #020915 0%,
+        #071428 12%,
+        #0b2247 28%,
+        #0d3060 42%,
+        #0e4a80 54%,
+        #1565a0 62%,
+        #1a7ab8 70%,
+        #1e8fd0 76%,
+        #3aa8e0 82%,     /* the expanse / firmament */
+        #1565a0 88%,
+        #0d3060 92%,
+        #07182e 96%,
+        #020915 100%
+      );
+    }
+
+    /* stars */
+    .stars {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+    .star {
+      position: absolute;
+      border-radius: 50%;
+      background: #fff;
+      animation: twinkle var(--dur, 3s) ease-in-out infinite var(--delay, 0s);
+    }
+    @keyframes twinkle {
+      0%, 100% { opacity: var(--lo, 0.2); }
+      50%       { opacity: var(--hi, 0.9); }
+    }
+
+    /* floating light rays */
+    .rays {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .ray {
+      position: absolute;
+      top: -10%;
+      width: 2px;
+      height: 140%;
+      background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.12) 60%, transparent 100%);
+      transform-origin: top center;
+      animation: sway var(--s, 8s) ease-in-out infinite var(--sd, 0s);
+    }
+    @keyframes sway {
+      0%, 100% { transform: rotate(var(--a, -4deg)) scaleX(1); opacity: 0.5; }
+      50%       { transform: rotate(calc(var(--a, -4deg) * -1)) scaleX(1.4); opacity: 1; }
+    }
+
+    /* firmament band */
+    .firmament {
+      position: absolute;
+      top: 48%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110%;
+      height: 18vh;
+      background: radial-gradient(ellipse 80% 100% at 50% 50%,
+        rgba(30,143,208,0.55) 0%,
+        rgba(21,101,160,0.3) 40%,
+        transparent 100%
+      );
+      filter: blur(18px);
+      border-radius: 50%;
+      animation: firmamentPulse 6s ease-in-out infinite;
+    }
+    @keyframes firmamentPulse {
+      0%, 100% { opacity: 0.7; transform: translate(-50%,-50%) scaleX(1); }
+      50%       { opacity: 1;   transform: translate(-50%,-50%) scaleX(1.05); }
+    }
+
+    /* waters above */
+    .waters-above {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 42%;
+      pointer-events: none;
+    }
+    .cloud {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(255,255,255,0.12), transparent 70%);
+      filter: blur(8px);
+      animation: drift var(--dr, 20s) linear infinite;
+    }
+    @keyframes drift {
+      from { transform: translateX(var(--from,-120%)); }
+      to   { transform: translateX(var(--to, 120%)); }
+    }
+
+    /* waters below */
+    .waters-below {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 36%;
+      overflow: hidden;
+    }
+    .water-surface {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(180deg,
+        rgba(13,33,55,0.0) 0%,
+        rgba(13,33,55,0.75) 20%,
+        #071828 60%,
+        #040e18 100%
+      );
+    }
+    .wave {
+      position: absolute;
+      width: 200%;
+      left: -50%;
+      height: 80px;
+      border-radius: 50%;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      background: transparent;
+      animation: waveMove var(--wt, 7s) ease-in-out infinite var(--wd, 0s);
+    }
+    @keyframes waveMove {
+      0%,100% { transform: translateX(0) scaleY(1); }
+      50%      { transform: translateX(3%) scaleY(1.15); }
+    }
+
+    /* ripple reflections */
+    .ripple-wrap { position: absolute; inset: 0; pointer-events: none; }
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      border: 1px solid rgba(58,168,224,0.18);
+      animation: rippleOut var(--rt, 5s) ease-out infinite var(--rd, 0s);
+      transform: scale(0);
+      opacity: 0;
+    }
+    @keyframes rippleOut {
+      0%   { transform: scale(0); opacity: 0.8; }
+      100% { transform: scale(4); opacity: 0; }
+    }
+
+    /* ── HERO CONTENT ─────────────────────────────────── */
+    .hero-content {
+      position: relative;
+      z-index: 10;
+      text-align: center;
+      padding: 0 1.5rem;
+      animation: fadeUp 1.8s cubic-bezier(0.22,1,0.36,1) forwards;
+      opacity: 0;
+    }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(30px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    .day-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.78rem;
+      font-weight: 400;
+      letter-spacing: 0.45em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1.2rem;
+      animation: fadeUp 1.8s 0.2s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .hero-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(2.4rem, 7vw, 6rem);
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: 0.04em;
+      color: var(--white-glow);
+      text-shadow:
+        0 0 40px rgba(58,168,224,0.6),
+        0 0 80px rgba(21,101,160,0.4),
+        0 2px 4px rgba(0,0,0,0.7);
+      margin-bottom: 0.5rem;
+      animation: fadeUp 1.8s 0.35s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .hero-sub {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.1rem, 3vw, 2rem);
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: rgba(201,168,76,0.9);
+      text-shadow: 0 0 20px rgba(201,168,76,0.4);
+      margin-bottom: 2.2rem;
+      animation: fadeUp 1.8s 0.5s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .divider {
+      width: 200px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--gold), transparent);
+      margin: 0 auto 2.2rem;
+      animation: fadeUp 1.8s 0.65s cubic-bezier(0.22,1,0.36,1) both;
+    }
+
+    .verse-box {
+      max-width: 600px;
+      margin: 0 auto 2.8rem;
+      font-size: clamp(1rem, 2.2vw, 1.35rem);
+      font-style: italic;
+      font-weight: 300;
+      line-height: 1.85;
+      color: rgba(245,237,224,0.82);
+      text-shadow: 0 1px 8px rgba(0,0,0,0.5);
+      animation: fadeUp 1.8s 0.8s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .verse-ref {
+      display: block;
+      margin-top: 0.6rem;
+      font-style: normal;
+      font-size: 0.78rem;
+      letter-spacing: 0.25em;
+      color: var(--gold);
+      opacity: 0.85;
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 36px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.65rem;
+      letter-spacing: 0.35em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.3);
+      animation: fadeUp 2s 1.5s both;
+    }
+    .scroll-arrow {
+      width: 1px;
+      height: 40px;
+      background: linear-gradient(180deg, rgba(201,168,76,0.6), transparent);
+      animation: arrowDrop 2s ease-in-out infinite;
+    }
+    @keyframes arrowDrop {
+      0%,100% { transform: scaleY(1); opacity: 0.5; }
+      50%      { transform: scaleY(1.2); opacity: 1; }
+    }
+
+    /* ── CONTENT SECTIONS ─────────────────────────────── */
+    .section {
+      position: relative;
+      padding: 100px 5vw;
+      background: linear-gradient(180deg, var(--sky-deep) 0%, var(--water-dark) 100%);
+    }
+
+    .section-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.4em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 1rem;
+    }
+
+    .section-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.5rem, 4vw, 2.8rem);
+      font-weight: 700;
+      color: var(--white-glow);
+      margin-bottom: 1.8rem;
+      line-height: 1.2;
+    }
+
+    .section-text {
+      font-size: clamp(1rem, 1.8vw, 1.2rem);
+      font-weight: 300;
+      line-height: 2;
+      color: rgba(245,237,224,0.75);
+      max-width: 680px;
+    }
+
+    /* cards */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 28px;
+      margin-top: 3rem;
+    }
+
+    .card {
+      border: 1px solid rgba(201,168,76,0.18);
+      border-radius: 4px;
+      padding: 2.2rem 2rem;
+      background: rgba(10,31,61,0.6);
+      backdrop-filter: blur(8px);
+      transition: transform 0.4s, border-color 0.4s, box-shadow 0.4s;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 60% 60% at 50% 0%, rgba(58,168,224,0.08), transparent 70%);
+      pointer-events: none;
+    }
+    .card:hover {
+      transform: translateY(-6px);
+      border-color: rgba(201,168,76,0.5);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.4), 0 0 30px rgba(58,168,224,0.12);
+    }
+
+    .card-icon {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+    }
+
+    .card-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.95rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: var(--gold-light);
+      margin-bottom: 0.9rem;
+    }
+
+    .card-text {
+      font-size: 0.95rem;
+      font-weight: 300;
+      line-height: 1.85;
+      color: rgba(245,237,224,0.68);
+    }
+
+    /* firmament visual */
+    .firmament-visual {
+      position: relative;
+      width: 100%;
+      max-width: 760px;
+      margin: 3rem auto 0;
+      aspect-ratio: 16/7;
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid rgba(58,168,224,0.2);
+      box-shadow: 0 0 60px rgba(58,168,224,0.15);
+    }
+    .fv-sky {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, #0a1428 0%, #0d3060 50%, #1976a8 100%);
+    }
+    .fv-firmament-line {
+      position: absolute;
+      top: 50%;
+      left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent 0%, rgba(58,168,224,0.8) 20%, rgba(255,255,255,0.9) 50%, rgba(58,168,224,0.8) 80%, transparent 100%);
+      transform: translateY(-50%);
+      box-shadow: 0 0 20px rgba(58,168,224,0.8), 0 0 60px rgba(58,168,224,0.4);
+    }
+    .fv-label-above {
+      position: absolute;
+      top: 20%;
+      width: 100%;
+      text-align: center;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      color: rgba(255,255,255,0.55);
+    }
+    .fv-water {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 50%;
+      background: linear-gradient(180deg, #0d2137 0%, #040e18 100%);
+    }
+    .fv-label-below {
+      position: absolute;
+      bottom: 22%;
+      width: 100%;
+      text-align: center;
+      font-family: 'Cinzel Decorative', serif;
+      font-size: 0.75rem;
+      letter-spacing: 0.35em;
+      color: rgba(58,168,224,0.6);
+    }
+    .fv-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%,-50%);
+      width: 60%;
+      height: 40px;
+      background: radial-gradient(ellipse, rgba(58,168,224,0.35), transparent 70%);
+      filter: blur(12px);
+    }
+
+    /* CTA */
+    .cta-section {
+      text-align: center;
+      padding: 80px 5vw 100px;
+      background: var(--water-dark);
+      border-top: 1px solid rgba(201,168,76,0.1);
+    }
+    .cta-title {
+      font-family: 'Cinzel Decorative', serif;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      color: var(--gold-light);
+      margin-bottom: 1rem;
+    }
+    .cta-text {
+      font-size: 1rem;
+      font-weight: 300;
+      color: rgba(245,237,224,0.6);
+      margin-bottom: 2.5rem;
+    }
+    .cta-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 0.8rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      padding: 14px 32px;
+      border-radius: 2px;
+      text-decoration: none;
+      display: inline-block;
+      transition: all 0.35s;
+      cursor: pointer;
+    }
+    .btn-primary {
+      background: var(--gold);
+      color: var(--sky-deep);
+      border: 1px solid var(--gold);
+    }
+    .btn-primary:hover {
+      background: var(--gold-light);
+      border-color: var(--gold-light);
+      box-shadow: 0 0 30px rgba(201,168,76,0.4);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--gold);
+      border: 1px solid rgba(201,168,76,0.4);
+    }
+    .btn-outline:hover {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(201,168,76,0.2);
+    }
+
+    /* footer */
+    footer {
+      text-align: center;
+      padding: 28px;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      color: rgba(255,255,255,0.2);
+      background: var(--sky-deep);
+      border-top: 1px solid rgba(255,255,255,0.05);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- BACK BUTTON (링크는 나중에 VS에서 삽입) -->
+  <a href="frontpage-index.html" class="back-btn">front page</a>
+
+  <!-- ── HERO ─────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="sky-layer"></div>
+
+    <!-- 별 -->
+    <div class="stars" id="stars"></div>
+
+    <!-- 빛의 광선 -->
+    <div class="rays" id="rays"></div>
+
+    <!-- 궁창 발광 -->
+    <div class="firmament"></div>
+
+    <!-- 위의 물 (구름) -->
+    <div class="waters-above" id="cloudsWrap"></div>
+
+    <!-- 아래의 물 -->
+    <div class="waters-below">
+      <div class="water-surface"></div>
+      <div class="wave" style="top:10%; --wt:9s; --wd:0s; opacity:0.5;"></div>
+      <div class="wave" style="top:25%; --wt:12s; --wd:2s; opacity:0.35;"></div>
+      <div class="wave" style="top:45%; --wt:7s; --wd:4s; opacity:0.25;"></div>
+      <div class="ripple-wrap" id="ripples"></div>
+    </div>
+
+    <!-- 텍스트 -->
+    <div class="hero-content">
+      <p class="day-label">The Second Day · 창조의 두 번째 날</p>
+      <h1 class="hero-title">Creation<br>of God</h1>
+      <p class="hero-sub">Day II — The Firmament</p>
+      <div class="divider"></div>
+      <div class="verse-box">
+        "하나님이 궁창을 만드사 궁창 아래의 물과 궁창 위의 물로 나뉘게 하시니 그대로 되니라.
+        하나님이 궁창을 하늘이라 부르시니라."
+        <span class="verse-ref">창세기 1:7–8 · Genesis 1:7–8</span>
+      </div>
+    </div>
+
+    <div class="scroll-hint">
+      <span>더 알아보기</span>
+      <div class="scroll-arrow"></div>
+    </div>
+  </section>
+
+  <!-- ── SECTION: 2일차 이야기 ───────────────────────── -->
+  <section class="section">
+    <div class="section-inner">
+      <p class="section-label">Day Two · 둘째 날의 창조</p>
+      <h2 class="section-title">하늘이 펼쳐지다</h2>
+      <p class="section-text">
+        창조의 둘째 날, 하나님께서는 거대한 궁창(firmament)을 만드셔서 물을 위아래로 분리하셨습니다.
+        태초의 물 한가운데로 하늘이 열리며, 위의 물과 아래의 물 사이에 드넓은 공간이 생겨났습니다.
+        하나님은 그 궁창을 '하늘(שָׁמַיִם, Shamayim)'이라 부르셨습니다.
+      </p>
+
+      <!-- Firmament Visual -->
+      <div class="firmament-visual">
+        <div class="fv-sky"></div>
+        <div class="fv-label-above">מַיִם מֵעַל — Waters Above</div>
+        <div class="fv-glow"></div>
+        <div class="fv-firmament-line"></div>
+        <div class="fv-water"></div>
+        <div class="fv-label-below">מַיִם מִתַּחַת — Waters Below</div>
+      </div>
+
+      <!-- Cards -->
+      <div class="cards">
+        <div class="card">
+          <div class="card-icon">🌌</div>
+          <div class="card-title">궁창 · The Firmament</div>
+          <p class="card-text">
+            히브리어 '라키아(רָקִיעַ)'는 펼쳐진 공간, 확장된 덮개를 의미합니다.
+            하나님께서 친히 이 광대한 하늘을 두 물 사이에 펼치셨습니다.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-icon">💧</div>
+          <div class="card-title">위의 물 · Waters Above</div>
+          <p class="card-text">
+            궁창 위로 올려진 물은 하늘의 물로, 구름과 비의 원천이 됩니다.
+            하나님은 물을 통해 생명과 질서를 예비하셨습니다.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🌊</div>
+          <div class="card-title">아래의 물 · Waters Below</div>
+          <p class="card-text">
+            궁창 아래의 물은 바다와 강, 생명의 근원이 됩니다.
+            셋째 날 땅이 드러날 때까지 온 지면을 덮고 있었습니다.
+          </p>
+        </div>
+        <div class="card">
+          <div class="card-icon">✨</div>
+          <div class="card-title">하늘 · Shamayim</div>
+          <p class="card-text">
+            하나님은 그 공간에 '하늘(שָׁמַיִם)'이라는 이름을 주셨습니다.
+            이름을 부여하심은 곧 권세와 목적을 부여하심이었습니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── CTA SECTION ─────────────────────────────────── -->
+  <section class="cta-section">
+    <h3 class="cta-title">창조의 여정을 계속하다</h3>
+    <p class="cta-text">하나님의 창조 이야기를 날마다 함께 탐험하세요.</p>
+    <div class="cta-buttons">
+      <!-- 링크는 나중에 VS Code에서 삽입 -->
+      <a href="day1_creation.html" class="btn btn-outline">← 첫째 날</a>
+      <a href="DAY3_LINK_HERE" class="btn btn-primary">셋째 날 →</a>
+    </div>
+  </section>
+
+  <footer>
+    &copy; Creation of God · Genesis 1:6–8 · 창세기 1:6–8
+  </footer>
+
+  <script>
+    // ── Stars ───────────────────────────────────────────
+    const starsEl = document.getElementById('stars');
+    for (let i = 0; i < 180; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const size = Math.random() * 2 + 0.5;
+      s.style.cssText = `
+        width:${size}px; height:${size}px;
+        top:${Math.random() * 55}%;
+        left:${Math.random() * 100}%;
+        --dur:${2 + Math.random() * 4}s;
+        --delay:${Math.random() * 4}s;
+        --lo:${0.1 + Math.random() * 0.25};
+        --hi:${0.6 + Math.random() * 0.4};
+      `;
+      starsEl.appendChild(s);
+    }
+
+    // ── Light rays ──────────────────────────────────────
+    const raysEl = document.getElementById('rays');
+    for (let i = 0; i < 12; i++) {
+      const r = document.createElement('div');
+      r.className = 'ray';
+      r.style.cssText = `
+        left:${5 + i * 8}%;
+        --a:${-8 + Math.random() * 16}deg;
+        --s:${7 + Math.random() * 6}s;
+        --sd:${Math.random() * 4}s;
+        opacity:${0.3 + Math.random() * 0.4};
+      `;
+      raysEl.appendChild(r);
+    }
+
+    // ── Clouds ──────────────────────────────────────────
+    const cloudsWrap = document.getElementById('cloudsWrap');
+    for (let i = 0; i < 8; i++) {
+      const c = document.createElement('div');
+      c.className = 'cloud';
+      const w = 200 + Math.random() * 400;
+      const h = 60 + Math.random() * 120;
+      const fromLeft = Math.random() > 0.5;
+      c.style.cssText = `
+        width:${w}px; height:${h}px;
+        top:${Math.random() * 80}%;
+        --dr:${18 + Math.random() * 20}s;
+        --from:${fromLeft ? '-120%' : '120%'};
+        --to:${fromLeft ? '120%' : '-120%'};
+        animation-delay:${Math.random() * -20}s;
+        opacity:${0.4 + Math.random() * 0.4};
+      `;
+      cloudsWrap.appendChild(c);
+    }
+
+    // ── Ripples ─────────────────────────────────────────
+    const ripplesEl = document.getElementById('ripples');
+    for (let i = 0; i < 6; i++) {
+      const r = document.createElement('div');
+      r.className = 'ripple';
+      const size = 30 + Math.random() * 50;
+      r.style.cssText = `
+        width:${size}px; height:${size}px;
+        top:${20 + Math.random() * 60}%;
+        left:${10 + Math.random() * 80}%;
+        --rt:${4 + Math.random() * 4}s;
+        --rd:${Math.random() * 5}s;
+      `;
+      ripplesEl.appendChild(r);
+    }
+
+    // ── Scroll fade-in for sections ─────────────────────
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.style.opacity = '1';
+          e.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.card, .firmament-visual').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(24px)';
+      el.style.transition = 'opacity 0.8s ease, transform 0.8s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>
