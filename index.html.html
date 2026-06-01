@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creation of God — 하나님의 창조</title>
+  <link href="https://fonts.googleapis.com/css2?family=Trajan+Pro&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cinzel:wght@400;600;900&family=EB+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --void:        #000000;
+      --deep:        #04030a;
+      --dark-mid:    #080614;
+      --gold:        #c8a84b;
+      --gold-bright: #f5c842;
+      --gold-warm:   #e8a020;
+      --gold-dim:    rgba(200,168,75,0.35);
+      --cream:       #fdf6e3;
+      --white:       #ffffff;
+      /* day1 palette */
+      --d1-light:    #f5c842;
+      --d1-shadow:   #1a0a00;
+      /* day2 palette */
+      --d2-sky:      #0d3060;
+      --d2-water:    #0a1f3d;
+      --d2-glow:     #3aa8e0;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'EB Garamond', serif;
+      background: var(--void);
+      color: var(--cream);
+      overflow-x: hidden;
+      cursor: none;
+    }
+
+    /* ── CUSTOM CURSOR ───────────────────────────────── */
+    .cursor      { position:fixed; width:7px; height:7px; background:var(--gold-bright); border-radius:50%; pointer-events:none; z-index:9999; mix-blend-mode:screen; transition:transform 0.1s; }
+    .cursor-ring { position:fixed; width:28px; height:28px; border:1px solid var(--gold-dim); border-radius:50%; pointer-events:none; z-index:9998; mix-blend-mode:screen; }
+
+    /* ── HERO ─────────────────────────────────────────── */
+    .hero {
+      position: relative;
+      width: 100%; height: 100vh;
+      min-height: 640px;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      overflow: hidden;
+      background: var(--void);
+    }
+
+    /* Starfield */
+    .starfield { position:absolute; inset:0; pointer-events:none; }
+    .star { position:absolute; border-radius:50%; background:#fff; animation:twinkle var(--td,3s) ease-in-out infinite var(--tdl,0s); }
+    @keyframes twinkle {
+      0%,100% { opacity:var(--tlo,.15); }
+      50%      { opacity:var(--thi,.85); }
+    }
+
+    /* Cosmos gradient */
+    .cosmos {
+      position:absolute; inset:0;
+      background: radial-gradient(ellipse 90% 90% at 50% 50%,
+        #0d0520 0%, #06030f 40%, #000000 100%);
+    }
+
+    /* Central divine glow */
+    .divine-glow {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      pointer-events:none;
+    }
+    .dg-core {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:80px; height:80px;
+      background:radial-gradient(ellipse, #fff 0%, #fff9d0 25%, #f5c842 55%, transparent 100%);
+      border-radius:50%;
+      filter:blur(3px);
+      animation:dgBreath 5s ease-in-out infinite;
+    }
+    .dg-mid {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:320px; height:320px;
+      background:radial-gradient(ellipse, rgba(245,200,66,.22) 0%, rgba(200,168,75,.08) 45%, transparent 100%);
+      border-radius:50%;
+      animation:dgBreath 7s ease-in-out infinite .5s;
+    }
+    .dg-outer {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:700px; height:700px;
+      background:radial-gradient(ellipse, rgba(200,168,75,.06) 0%, transparent 65%);
+      border-radius:50%;
+      animation:dgBreath 9s ease-in-out infinite 1s;
+    }
+    @keyframes dgBreath {
+      0%,100% { opacity:.8; transform:translate(-50%,-50%) scale(1); }
+      50%      { opacity:1;  transform:translate(-50%,-50%) scale(1.12); }
+    }
+
+    /* Gold rays from center */
+    .hero-rays { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; }
+    .hray {
+      position:absolute; top:0; left:0;
+      height:1px;
+      background:linear-gradient(90deg, rgba(255,255,220,.85), rgba(200,168,75,.3) 40%, transparent 100%);
+      transform-origin:left center;
+      transform:rotate(var(--a)) translateY(-50%);
+      animation:hrayPulse var(--hp,6s) ease-in-out infinite var(--hd,0s);
+    }
+    @keyframes hrayPulse {
+      0%,100% { opacity:var(--hlo,.2); }
+      50%      { opacity:var(--hhi,.7); }
+    }
+
+    /* Genesis text mark at top */
+    .genesis-mark {
+      position:absolute; top:30px; left:50%; transform:translateX(-50%);
+      font-size:.62rem; letter-spacing:.55em; text-transform:uppercase;
+      color:rgba(200,168,75,.4);
+      animation:fadeIn 2s 1.2s both;
+    }
+
+    /* HERO CONTENT */
+    .hero-content {
+      position:relative; z-index:10;
+      text-align:center; padding:0 2rem;
+    }
+    .pre-title {
+      font-size:.68rem; letter-spacing:.55em; text-transform:uppercase;
+      color:var(--gold); opacity:.7;
+      margin-bottom:1.6rem;
+      animation:fadeUp 1.6s .3s both;
+    }
+    .main-title {
+      font-family:'Cinzel', serif;
+      font-size:clamp(2.6rem, 8vw, 7rem);
+      font-weight:900;
+      line-height:.95;
+      letter-spacing:.06em;
+      color:var(--white);
+      text-shadow:
+        0 0 60px rgba(245,200,66,.5),
+        0 0 120px rgba(200,168,75,.25);
+      margin-bottom:.5rem;
+      animation:fadeUp 1.8s .5s both;
+    }
+    .main-title span { color:var(--gold); }
+    .sub-title {
+      font-family:'EB Garamond', serif;
+      font-size:clamp(1rem, 2.5vw, 1.5rem);
+      font-style:italic;
+      font-weight:300;
+      color:rgba(253,246,227,.5);
+      letter-spacing:.12em;
+      margin-bottom:2.8rem;
+      animation:fadeUp 1.8s .7s both;
+    }
+
+    /* gold ornament */
+    .ornament {
+      display:flex; align-items:center; gap:1rem; justify-content:center;
+      margin-bottom:2.8rem;
+      animation:fadeUp 2s .9s both;
+    }
+    .orn-line { flex:1; max-width:100px; height:1px; background:linear-gradient(90deg,transparent,var(--gold-dim)); }
+    .orn-line.r { background:linear-gradient(90deg,var(--gold-dim),transparent); }
+    .orn-diamond {
+      width:8px; height:8px;
+      background:var(--gold);
+      transform:rotate(45deg);
+      box-shadow:0 0 14px var(--gold);
+    }
+
+    .hero-desc {
+      max-width:500px; margin:0 auto 3.5rem;
+      font-size:clamp(.95rem,1.8vw,1.15rem);
+      font-style:italic; font-weight:300;
+      line-height:1.9;
+      color:rgba(253,246,227,.6);
+      animation:fadeUp 2s 1.1s both;
+    }
+
+    .scroll-hint {
+      position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+      z-index:10; display:flex; flex-direction:column; align-items:center; gap:8px;
+      animation:fadeIn 2s 2.2s both;
+    }
+    .sh-text { font-size:.58rem; letter-spacing:.42em; text-transform:uppercase; color:rgba(200,168,75,.3); }
+    .sh-line { width:1px; height:42px; background:linear-gradient(180deg,var(--gold-dim),transparent); animation:shDrop 2.4s ease-in-out infinite; }
+    @keyframes shDrop { 0%,100%{opacity:.4;transform:scaleY(1)} 50%{opacity:1;transform:scaleY(1.2)} }
+
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(24px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity:0; }
+      to   { opacity:1; }
+    }
+
+    /* ── DAYS SECTION ─────────────────────────────────── */
+    .days-section {
+      position:relative;
+      padding:120px 5vw 140px;
+      background:var(--deep);
+      overflow:hidden;
+    }
+    .days-bg {
+      position:absolute; inset:0; pointer-events:none;
+      background:
+        radial-gradient(ellipse 60% 50% at 20% 50%, rgba(245,180,50,.04) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 80% 50%, rgba(13,48,96,.2) 0%, transparent 60%);
+    }
+
+    .days-header {
+      text-align:center; margin-bottom:70px;
+    }
+    .days-header .label {
+      font-size:.65rem; letter-spacing:.48em; text-transform:uppercase;
+      color:var(--gold); opacity:.65; margin-bottom:.9rem;
+    }
+    .days-header h2 {
+      font-family:'Cinzel', serif;
+      font-size:clamp(1.4rem,3.5vw,2.4rem);
+      font-weight:600; color:var(--cream);
+      letter-spacing:.1em;
+    }
+
+    /* Day cards */
+    .day-cards {
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:32px;
+      max-width:1100px;
+      margin:0 auto;
+    }
+    @media(max-width:680px) { .day-cards { grid-template-columns:1fr; } }
+
+    .day-card {
+      position:relative;
+      border:1px solid rgba(200,168,75,.15);
+      border-radius:3px;
+      overflow:hidden;
+      text-decoration:none;
+      color:inherit;
+      display:block;
+      transition:transform .5s cubic-bezier(.22,1,.36,1), border-color .4s, box-shadow .4s;
+      aspect-ratio:4/5;
+      min-height:480px;
+    }
+    .day-card:hover {
+      transform:translateY(-8px) scale(1.01);
+      border-color:rgba(200,168,75,.45);
+      box-shadow:0 30px 70px rgba(0,0,0,.55);
+    }
+
+    /* DAY 1 CARD */
+    .day-card.d1 { background:var(--void); }
+    .d1-bg {
+      position:absolute; inset:0;
+      background:radial-gradient(ellipse 80% 80% at 50% 45%,
+        #301800 0%, #1a0800 30%, #0d0408 65%, #000 100%);
+    }
+    .d1-light-burst {
+      position:absolute; top:38%; left:50%;
+      transform:translate(-50%,-50%);
+      pointer-events:none;
+    }
+    .d1-core {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:70px; height:70px;
+      background:radial-gradient(ellipse,#fff 0%,#fffbe6 20%,#f5c842 50%,#e8832a 80%,transparent 100%);
+      border-radius:50%; filter:blur(2px);
+      animation:coreBreath 4s ease-in-out infinite;
+    }
+    @keyframes coreBreath { 0%,100%{transform:translate(-50%,-50%) scale(1)} 50%{transform:translate(-50%,-50%) scale(1.2)} }
+    .d1-glow {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:260px; height:260px;
+      background:radial-gradient(ellipse,rgba(245,200,66,.3) 0%,rgba(232,131,42,.12) 40%,transparent 70%);
+      border-radius:50%;
+      animation:coreBreath 6s ease-in-out infinite .5s;
+    }
+    .d1-rays { position:absolute; top:38%; left:50%; transform:translate(-50%,-50%); }
+    .d1ray {
+      position:absolute; top:0; left:0;
+      height:1px;
+      background:linear-gradient(90deg,rgba(255,255,180,.8),rgba(245,200,66,.2) 40%,transparent);
+      transform-origin:left center;
+      transform:rotate(var(--a)) translateY(-50%);
+      animation:hrayPulse var(--hp,5s) ease-in-out infinite var(--hd,0s);
+    }
+    .d1-dark-half {
+      position:absolute; bottom:0; left:0; right:0; height:45%;
+      background:linear-gradient(180deg,transparent,rgba(0,0,0,.92) 100%);
+    }
+
+    /* DAY 2 CARD */
+    .day-card.d2 { background:var(--d2-water); }
+    .d2-bg {
+      position:absolute; inset:0;
+      background:linear-gradient(180deg,
+        #020815 0%,
+        #071428 15%,
+        #0b2247 30%,
+        #0d3060 45%,
+        #1565a0 60%,
+        #1a7ab8 68%,
+        #3aa8e0 74%,
+        #1565a0 80%,
+        #0d3060 87%,
+        #07182e 94%,
+        #020915 100%
+      );
+    }
+    .d2-firmament {
+      position:absolute; top:50%; left:50%;
+      transform:translate(-50%,-50%);
+      width:120%; height:16%;
+      background:radial-gradient(ellipse 70% 100% at 50%,rgba(58,168,224,.45),transparent);
+      filter:blur(14px); border-radius:50%;
+      animation:fmPulse 6s ease-in-out infinite;
+    }
+    @keyframes fmPulse { 0%,100%{opacity:.7} 50%{opacity:1} }
+    .d2-line {
+      position:absolute; top:50%; left:0; right:0;
+      height:1px;
+      background:linear-gradient(90deg,transparent,rgba(255,255,255,.7) 50%,transparent);
+      box-shadow:0 0 16px rgba(58,168,224,.8), 0 0 40px rgba(58,168,224,.3);
+      animation:fmPulse 5s ease-in-out infinite;
+    }
+    .d2-stars { position:absolute; inset:0; pointer-events:none; }
+    .d2-wave {
+      position:absolute; width:200%; left:-50%; height:60px;
+      border-radius:50%; border-top:1px solid rgba(255,255,255,.07);
+      animation:waveM var(--wt,8s) ease-in-out infinite var(--wd,0s);
+    }
+    @keyframes waveM { 0%,100%{transform:translateX(0)} 50%{transform:translateX(3%)} }
+    .d2-overlay {
+      position:absolute; inset:0;
+      background:linear-gradient(180deg,rgba(2,8,21,.5) 0%,transparent 30%,transparent 70%,rgba(2,8,21,.7) 100%);
+    }
+
+    /* card label */
+    .card-inner {
+      position:absolute; inset:0; z-index:10;
+      display:flex; flex-direction:column;
+      justify-content:flex-end;
+      padding:2.4rem 2.2rem;
+    }
+    .card-day-num {
+      font-family:'Cinzel', serif;
+      font-size:.62rem; letter-spacing:.52em; text-transform:uppercase;
+      color:var(--gold); opacity:.75;
+      margin-bottom:.7rem;
+    }
+    .card-day-title {
+      font-family:'Playfair Display', serif;
+      font-size:clamp(1.6rem,3.5vw,2.4rem);
+      font-weight:900; font-style:italic;
+      color:#fff;
+      text-shadow:0 2px 20px rgba(0,0,0,.8);
+      margin-bottom:.6rem;
+      line-height:1.1;
+    }
+    .card-day-sub {
+      font-size:.82rem; font-weight:300; font-style:italic;
+      color:rgba(253,246,227,.55);
+      letter-spacing:.08em;
+      margin-bottom:1.4rem;
+    }
+    .card-cta {
+      display:inline-flex; align-items:center; gap:.6rem;
+      font-size:.68rem; letter-spacing:.3em; text-transform:uppercase;
+      color:var(--gold); font-weight:500;
+      opacity:.8;
+      transition:opacity .3s, gap .3s;
+    }
+    .day-card:hover .card-cta { opacity:1; gap:.9rem; }
+    .cta-arrow { font-size:.9rem; }
+
+    /* top tag */
+    .card-tag {
+      position:absolute; top:1.6rem; left:2.2rem; z-index:11;
+      font-size:.6rem; letter-spacing:.32em; text-transform:uppercase;
+      color:rgba(200,168,75,.55);
+      border:1px solid rgba(200,168,75,.2);
+      padding:4px 10px; border-radius:1px;
+      backdrop-filter:blur(6px);
+      background:rgba(0,0,0,.35);
+    }
+
+    /* hover shimmer overlay */
+    .day-card::after {
+      content:''; position:absolute; inset:0; z-index:5;
+      background:linear-gradient(135deg, transparent 40%, rgba(200,168,75,.05) 100%);
+      opacity:0; transition:opacity .4s;
+    }
+    .day-card:hover::after { opacity:1; }
+
+    /* ── VERSE STRIP ─────────────────────────────────── */
+    .verse-strip {
+      background:var(--dark-mid);
+      border-top:1px solid rgba(200,168,75,.08);
+      border-bottom:1px solid rgba(200,168,75,.08);
+      padding:60px 6vw;
+      text-align:center;
+    }
+    .verse-strip blockquote {
+      max-width:720px; margin:0 auto;
+      font-size:clamp(1.05rem,2.2vw,1.4rem);
+      font-style:italic; font-weight:300;
+      line-height:1.95; color:rgba(253,246,227,.7);
+    }
+    .verse-strip cite {
+      display:block; margin-top:1rem;
+      font-style:normal; font-size:.68rem;
+      letter-spacing:.38em; text-transform:uppercase;
+      color:var(--gold); opacity:.65;
+    }
+
+    /* ── TIMELINE ─────────────────────────────────────── */
+    .timeline-section {
+      padding:110px 6vw;
+      background:var(--deep);
+      border-top:1px solid rgba(200,168,75,.06);
+    }
+    .tl-inner { max-width:860px; margin:0 auto; }
+    .tl-header { text-align:center; margin-bottom:60px; }
+    .tl-header .label {
+      font-size:.65rem; letter-spacing:.48em; text-transform:uppercase;
+      color:var(--gold); opacity:.65; margin-bottom:.9rem;
+    }
+    .tl-header h2 {
+      font-family:'Cinzel', serif;
+      font-size:clamp(1.3rem,3vw,2rem);
+      font-weight:600; color:var(--cream);
+      letter-spacing:.1em;
+    }
+
+    .tl-track {
+      position:relative;
+      display:flex; flex-direction:column; gap:0;
+    }
+    .tl-track::before {
+      content:''; position:absolute;
+      left:50%; top:0; bottom:0;
+      width:1px;
+      background:linear-gradient(180deg,var(--gold-dim),rgba(200,168,75,.05));
+      transform:translateX(-50%);
+    }
+    @media(max-width:620px) { .tl-track::before { left:20px; } }
+
+    .tl-row {
+      display:grid;
+      grid-template-columns:1fr 60px 1fr;
+      align-items:center;
+      gap:0;
+      padding:10px 0;
+    }
+    @media(max-width:620px) {
+      .tl-row { grid-template-columns:44px 1fr; }
+      .tl-row .tl-left { display:none; }
+    }
+
+    .tl-left { text-align:right; padding-right:2rem; }
+    .tl-right { text-align:left; padding-left:2rem; }
+
+    .tl-center {
+      display:flex; align-items:center; justify-content:center;
+      position:relative; z-index:2;
+    }
+    .tl-dot {
+      width:16px; height:16px;
+      border-radius:50%;
+      border:1px solid var(--gold);
+      background:var(--void);
+      box-shadow:0 0 14px rgba(200,168,75,.5);
+      position:relative;
+      flex-shrink:0;
+    }
+    .tl-dot::after {
+      content:''; position:absolute; inset:3px;
+      border-radius:50%; background:var(--gold);
+    }
+
+    .tl-day {
+      font-size:.6rem; letter-spacing:.38em; text-transform:uppercase;
+      color:var(--gold); opacity:.65; margin-bottom:.35rem;
+    }
+    .tl-name {
+      font-family:'Playfair Display', serif;
+      font-size:1rem; font-weight:700; font-style:italic;
+      color:var(--cream); margin-bottom:.3rem;
+    }
+    .tl-desc {
+      font-size:.85rem; font-weight:300; line-height:1.75;
+      color:rgba(253,246,227,.52);
+    }
+    .tl-hebrew {
+      font-size:1rem; color:rgba(200,168,75,.55);
+      margin-top:.3rem; letter-spacing:.1em;
+    }
+
+    /* ── FOOTER ───────────────────────────────────────── */
+    footer {
+      text-align:center; padding:40px 2rem;
+      background:var(--void);
+      border-top:1px solid rgba(200,168,75,.06);
+    }
+    .footer-logo {
+      font-family:'Cinzel', serif;
+      font-size:.85rem; letter-spacing:.4em;
+      color:rgba(200,168,75,.4); margin-bottom:.6rem;
+    }
+    .footer-sub {
+      font-size:.62rem; letter-spacing:.28em; text-transform:uppercase;
+      color:rgba(255,255,255,.15);
+    }
+
+    /* reveal */
+    .reveal { opacity:0; transform:translateY(26px); transition:opacity .9s ease, transform .9s ease; }
+    .reveal.up { opacity:1; transform:translateY(0); }
+  </style>
+</head>
+<body>
+
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-ring" id="cursorRing"></div>
+
+  <!-- ── HERO ─────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="cosmos"></div>
+    <div class="starfield" id="starfield"></div>
+
+    <div class="divine-glow">
+      <div class="dg-outer"></div>
+      <div class="dg-mid"></div>
+      <div class="dg-core"></div>
+    </div>
+
+    <div class="hero-rays" id="heroRays"></div>
+
+    <p class="genesis-mark">בְּרֵאשִׁית · In the Beginning · 태초에</p>
+
+    <div class="hero-content">
+      <p class="pre-title">창세기 1장 · The Book of Genesis</p>
+      <h1 class="main-title">Creation<br>of <span>God</span></h1>
+      <p class="sub-title">하나님의 창조 이야기</p>
+      <div class="ornament">
+        <div class="orn-line"></div>
+        <div class="orn-diamond"></div>
+        <div class="orn-line r"></div>
+      </div>
+      <p class="hero-desc">
+        태초에 하나님이 천지를 창조하셨습니다.<br>
+        창조의 날들을 함께 탐험하세요.
+      </p>
+    </div>
+
+    <div class="scroll-hint">
+      <span class="sh-text">아래로</span>
+      <div class="sh-line"></div>
+    </div>
+  </section>
+
+  <!-- ── DAY CARDS ─────────────────────────────────────── -->
+  <section class="days-section">
+    <div class="days-bg"></div>
+
+    <div class="days-header reveal">
+      <p class="label">The Days of Creation · 창조의 날들</p>
+      <h2>날을 선택하세요</h2>
+    </div>
+
+    <div class="day-cards">
+
+      <!-- DAY 1 -->
+      <a href="day1_creation.html" class="day-card d1 reveal">
+        <!-- Background scene -->
+        <div class="d1-bg"></div>
+        <div class="d1-light-burst">
+          <div class="d1-glow"></div>
+          <div class="d1-core"></div>
+        </div>
+        <div class="d1-rays" id="d1rays"></div>
+        <div class="d1-dark-half"></div>
+
+        <span class="card-tag">Genesis 1:1–5</span>
+
+        <div class="card-inner">
+          <p class="card-day-num">Day I · 첫째 날</p>
+          <h3 class="card-day-title">빛이 있으라<br><em style="font-size:.7em;color:rgba(245,200,66,.8)">Let There Be Light</em></h3>
+          <p class="card-day-sub">창세기 1:1–5 · 빛과 어둠의 분리</p>
+          <span class="card-cta">탐험하기 <span class="cta-arrow">→</span></span>
+        </div>
+      </a>
+
+      <!-- DAY 2 -->
+      <a href="day2_creation.html" class="day-card d2 reveal">
+        <!-- Background scene -->
+        <div class="d2-bg"></div>
+        <div class="d2-stars" id="d2stars"></div>
+        <div class="d2-firmament"></div>
+        <div class="d2-line"></div>
+        <div class="d2-wave" style="top:55%;--wt:9s;--wd:0s;"></div>
+        <div class="d2-wave" style="top:68%;--wt:12s;--wd:2s;opacity:.6;"></div>
+        <div class="d2-wave" style="top:80%;--wt:7s;--wd:4s;opacity:.35;"></div>
+        <div class="d2-overlay"></div>
+
+        <span class="card-tag">Genesis 1:6–8</span>
+
+        <div class="card-inner">
+          <p class="card-day-num">Day II · 둘째 날</p>
+          <h3 class="card-day-title">궁창이<br>펼쳐지다<em style="display:block;font-size:.65em;color:rgba(58,168,224,.85)">The Firmament</em></h3>
+          <p class="card-day-sub">창세기 1:6–8 · 하늘과 물의 분리</p>
+          <span class="card-cta">탐험하기 <span class="cta-arrow">→</span></span>
+        </div>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ── VERSE STRIP ─────────────────────────────────── -->
+  <div class="verse-strip reveal">
+    <blockquote>
+      "태초에 하나님이 천지를 창조하시니라.
+      땅이 혼돈하고 공허하며 흑암이 깊음 위에 있고
+      하나님의 영은 수면 위에 운행하시니라."
+      <cite>창세기 1:1–2 · Genesis 1:1–2</cite>
+    </blockquote>
+  </div>
+
+  <!-- ── TIMELINE ─────────────────────────────────────── -->
+  <section class="timeline-section">
+    <div class="tl-inner">
+      <div class="tl-header reveal">
+        <p class="label">Creation Timeline · 창조의 순서</p>
+        <h2>창조의 날들</h2>
+      </div>
+
+      <div class="tl-track">
+
+        <!-- Day 1 -->
+        <div class="tl-row reveal">
+          <div class="tl-left">
+            <p class="tl-day">Day I · 첫째 날</p>
+            <p class="tl-name">빛의 창조</p>
+            <p class="tl-desc">하나님이 빛을 창조하시고 빛과 어둠을 나누셨습니다.</p>
+            <p class="tl-hebrew">יְהִי אוֹר</p>
+          </div>
+          <div class="tl-center"><div class="tl-dot"></div></div>
+          <div class="tl-right">
+            <p class="tl-day">Genesis 1:1–5</p>
+            <p class="tl-name">Let There Be Light</p>
+            <p class="tl-desc">God created light and separated it from darkness.</p>
+          </div>
+        </div>
+
+        <!-- Day 2 -->
+        <div class="tl-row reveal">
+          <div class="tl-left">
+            <p class="tl-day">Day II · 둘째 날</p>
+            <p class="tl-name">궁창의 창조</p>
+            <p class="tl-desc">하나님이 궁창을 만드사 위의 물과 아래의 물을 나누셨습니다.</p>
+            <p class="tl-hebrew">רָקִיעַ</p>
+          </div>
+          <div class="tl-center"><div class="tl-dot"></div></div>
+          <div class="tl-right">
+            <p class="tl-day">Genesis 1:6–8</p>
+            <p class="tl-name">The Firmament</p>
+            <p class="tl-desc">God made the expanse and separated the waters above from below.</p>
+          </div>
+        </div>
+
+        <!-- Coming soon rows -->
+        <div class="tl-row reveal" style="opacity:.35;">
+          <div class="tl-left">
+            <p class="tl-day">Day III · 셋째 날</p>
+            <p class="tl-name">땅과 바다, 식물</p>
+            <p class="tl-desc">곧 공개됩니다</p>
+          </div>
+          <div class="tl-center">
+            <div class="tl-dot" style="opacity:.3;box-shadow:none;"></div>
+          </div>
+          <div class="tl-right">
+            <p class="tl-day">Genesis 1:9–13</p>
+            <p class="tl-name">Land, Sea &amp; Plants</p>
+            <p class="tl-desc">Coming soon</p>
+          </div>
+        </div>
+
+        <div class="tl-row reveal" style="opacity:.2;">
+          <div class="tl-left">
+            <p class="tl-day">Day IV–VII · 넷째~일곱째 날</p>
+            <p class="tl-name">별, 생물, 인간, 안식</p>
+            <p class="tl-desc">곧 공개됩니다</p>
+          </div>
+          <div class="tl-center">
+            <div class="tl-dot" style="opacity:.2;box-shadow:none;"></div>
+          </div>
+          <div class="tl-right">
+            <p class="tl-day">Genesis 1:14–2:3</p>
+            <p class="tl-name">Stars, Creatures, Humans &amp; Rest</p>
+            <p class="tl-desc">Coming soon</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ───────────────────────────────────────── -->
+  <footer>
+    <p class="footer-logo">Creation of God</p>
+    <p class="footer-sub">창세기 · Genesis 1장 · 하나님의 창조 이야기</p>
+  </footer>
+
+  <script>
+    // ── Cursor ───────────────────────────────────────────
+    const cur = document.getElementById('cursor');
+    const ring = document.getElementById('cursorRing');
+    let mx=0, my=0, rx=0, ry=0;
+    document.addEventListener('mousemove', e => {
+      mx = e.clientX; my = e.clientY;
+      cur.style.transform = `translate(${mx-3.5}px,${my-3.5}px)`;
+    });
+    (function animR() {
+      rx += (mx-rx)*.1; ry += (my-ry)*.1;
+      ring.style.transform = `translate(${rx-14}px,${ry-14}px)`;
+      requestAnimationFrame(animR);
+    })();
+
+    // ── Starfield ────────────────────────────────────────
+    const sf = document.getElementById('starfield');
+    for (let i=0; i<220; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const sz = Math.random()*2+.4;
+      s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*100}%;left:${Math.random()*100}%;
+        --td:${2+Math.random()*4}s;--tdl:${Math.random()*5}s;
+        --tlo:${.05+Math.random()*.2};--thi:${.5+Math.random()*.5};`;
+      sf.appendChild(s);
+    }
+
+    // ── Hero rays ────────────────────────────────────────
+    const hr = document.getElementById('heroRays');
+    for (let i=0; i<20; i++) {
+      const r = document.createElement('div');
+      r.className = 'hray';
+      const len = 300+Math.random()*500;
+      r.style.cssText = `width:${len}px;height:${.5+Math.random()*1}px;
+        --a:${i*(360/20)}deg;
+        --hp:${5+Math.random()*6}s;--hd:${Math.random()*4}s;
+        --hlo:${.05+Math.random()*.2};--hhi:${.3+Math.random()*.5};`;
+      hr.appendChild(r);
+    }
+
+    // ── Day1 card rays ───────────────────────────────────
+    const d1r = document.getElementById('d1rays');
+    for (let i=0; i<16; i++) {
+      const r = document.createElement('div');
+      r.className = 'd1ray';
+      const len = 150+Math.random()*220;
+      r.style.cssText = `width:${len}px;height:${.5+Math.random()}px;
+        --a:${i*(360/16)}deg;
+        --hp:${4+Math.random()*5}s;--hd:${Math.random()*3}s;
+        --hlo:${.1+Math.random()*.2};--hhi:${.4+Math.random()*.5};`;
+      d1r.appendChild(r);
+    }
+
+    // ── Day2 card stars ──────────────────────────────────
+    const d2s = document.getElementById('d2stars');
+    for (let i=0; i<60; i++) {
+      const s = document.createElement('div');
+      s.className = 'star';
+      const sz = Math.random()*1.5+.3;
+      s.style.cssText = `width:${sz}px;height:${sz}px;top:${Math.random()*48}%;left:${Math.random()*100}%;
+        --td:${2+Math.random()*3}s;--tdl:${Math.random()*4}s;
+        --tlo:.1;--thi:.7;`;
+      d2s.appendChild(s);
+    }
+
+    // ── Scroll reveal ────────────────────────────────────
+    const obs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('up');
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transitionDelay = `${(i % 3) * 0.12}s`;
+      obs.observe(el);
+    });
+  </script>
+</body>
+</html>
